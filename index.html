@@ -213,4 +213,20 @@ const search=document.getElementById('search'),cards=[...document.querySelectorA
 function updateCards(){const q=search.value.trim().toLowerCase();let visible=0;cards.forEach(card=>{const ok=card.dataset.name.includes(q)&&(activeFilter==='all'||(card.dataset.category||'').split(/\s+/).includes(activeFilter));card.style.display=ok?'':'none';if(ok)visible++});empty.style.display=visible?'none':'block'}
 search.addEventListener('input',updateCards);filters.forEach(btn=>btn.addEventListener('click',()=>{activeFilter=btn.dataset.filter;filters.forEach(b=>b.classList.toggle('active',b===btn));updateCards()}));
 const toast=document.getElementById('toast');let toastTimer;document.querySelectorAll('[data-copy]').forEach(btn=>btn.addEventListener('click',async()=>{const value=btn.dataset.copy;try{await navigator.clipboard.writeText(value)}catch(e){const temp=document.createElement('textarea');temp.value=value;document.body.appendChild(temp);temp.select();document.execCommand('copy');temp.remove()}toast.textContent='Referral code copied: '+value;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),1900)}));document.getElementById('year').textContent=new Date().getFullYear();
-</script></body></html>
+</script><script>
+// Track clicks on app download/open links in Google Analytics 4.
+document.addEventListener('click', function (event) {
+  const link = event.target.closest('a.download-button');
+  if (!link) return;
+  const card = link.closest('.app-card');
+  const appName = card ? (card.getAttribute('data-name') || 'Unknown app').split(/[•·]/)[0].trim() : 'Unknown app';
+  if (typeof gtag === 'function') {
+    gtag('event', 'app_link_click', {
+      app_name: appName,
+      link_url: link.href,
+      transport_type: 'beacon'
+    });
+  }
+});
+</script>
+</body></html>
